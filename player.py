@@ -1,5 +1,6 @@
 import pygame
 
+from Asteroids.constants import PLAYER_SHOOT_COOLDOWN_SECONDS
 from constants import PlAYER_SHOT_SPEED, SHOT_RADIUS, PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
 from shot import Shot
 from circleshape import CircleShape
@@ -9,6 +10,7 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x,y,PLAYER_RADIUS)
         self.rotation = 0
+        self.shot_cooldown = 0
 
     # in the Player class
     def triangle(self):
@@ -24,6 +26,7 @@ class Player(CircleShape):
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        self.shot_cooldown -= dt
 
         if keys[pygame.K_a]:
             self.rotate(-dt)
@@ -34,7 +37,12 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
         if keys[pygame.K_k]:
-            self.shoot(dt)
+            if self.shot_cooldown > 0:
+                pass
+            else:
+                self.shot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+                self.shoot(dt)
+
 
     def move(self,dt):
         unit_vector = pygame.Vector2(0, 1)
